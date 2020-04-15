@@ -13,7 +13,7 @@ type test struct {
 }
 
 func TestUnpack(t *testing.T) {
-	for i, tst := range [...]test{
+	for _, tst := range [...]test{
 		{
 			input:    "a4bc2d5e",
 			expected: "aaaabccddddde",
@@ -69,7 +69,7 @@ func TestUnpack(t *testing.T) {
 func TestUnpackWithEscape(t *testing.T) {
 	//t.Skip() // Remove if task with asterisk completed
 
-	for i, tst := range [...]test{
+	for _, tst := range [...]test{
 		{
 			input:    `qwe\4\5`,
 			expected: `qwe45`,
