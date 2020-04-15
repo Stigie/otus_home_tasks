@@ -1,7 +1,6 @@
 package hw02_unpack_string //nolint:golint,stylecheck
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
