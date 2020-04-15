@@ -11,9 +11,8 @@ import (
 
 var ErrInvalidString = errors.New("invalid string")
 
-func Unpack(input string) (string, error) {
+func Unpack(input string) (string, error) { //nolint:gocognit,funlen
 	var b strings.Builder
-	b.Grow(32)
 	var prevRune rune
 	isScreenPrevRune := false
 
@@ -22,7 +21,6 @@ func Unpack(input string) (string, error) {
 	}
 
 	for i, char := range input {
-
 		if prevRune == 0 && unicode.IsDigit(char) {
 			return "", ErrInvalidString
 		}
@@ -37,7 +35,7 @@ func Unpack(input string) (string, error) {
 
 		if prevRune == '\\' && !isScreenPrevRune {
 			if char == '\\' || unicode.IsDigit(char) {
-				_, err := fmt.Fprintf(&b, string(char))
+				_, err := fmt.Fprintf(&b, "%s", string(char))
 				isScreenPrevRune = true
 				prevRune = char
 				if err != nil {
@@ -62,14 +60,18 @@ func Unpack(input string) (string, error) {
 			}
 
 			if repeat == 0 {
-				temp := b.String()[0:len(b.String())-1]
+				temp := b.String()[0 : len(b.String())-1]
 				b.Reset()
-				_, err = fmt.Fprintf(&b, temp)
+				_, err := fmt.Fprintf(&b, "%s", temp)
+				if err != nil {
+					log.Println(err)
+				}
 				prevRune = char
 				continue
 			}
 
-			_, err = fmt.Fprintf(&b, strings.Repeat(string(prevRune), repeat-1))
+			repeat--
+			_, err = fmt.Fprintf(&b, "%s", strings.Repeat(string(prevRune), repeat))
 			if err != nil {
 				log.Println(err)
 			}
@@ -81,7 +83,7 @@ func Unpack(input string) (string, error) {
 		}
 
 		if char != '\\' {
-			_, err := fmt.Fprintf(&b, string(char))
+			_, err := fmt.Fprintf(&b, "%s", string(char))
 			if err != nil {
 				log.Println(err)
 			}

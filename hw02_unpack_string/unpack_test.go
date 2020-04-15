@@ -62,7 +62,6 @@ func TestUnpack(t *testing.T) {
 
 	} {
 		result, err := Unpack(tst.input)
-		fmt.Println(result, err, i+1)
 		require.Equal(t, tst.err, err)
 		require.Equal(t, tst.expected, result)
 	}
@@ -109,7 +108,6 @@ func TestUnpackWithEscape(t *testing.T) {
 		},
 	} {
 		result, err := Unpack(tst.input)
-		fmt.Println(result, err, i+1)
 		require.Equal(t, tst.err, err)
 		require.Equal(t, tst.expected, result)
 	}
