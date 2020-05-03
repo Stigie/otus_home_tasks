@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -xeuo pipefail
 
 go build -o go-telnet
 
@@ -32,5 +32,4 @@ expected_telnet_err='...Connected to localhost:4242
 fileEquals /tmp/telnet.err "${expected_telnet_err}"
 
 rm -f go-telnet
-
 echo "PASS"
