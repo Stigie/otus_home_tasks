@@ -33,7 +33,12 @@ func TestUnpack(t *testing.T) {
 			err:      ErrInvalidString,
 		},
 		{
-			input:    "aaa10b",
+			input:    "45aaa",
+			expected: "",
+			err:      ErrInvalidString,
+		},
+		{
+			input:    "aaa20b",
 			expected: "",
 			err:      ErrInvalidString,
 		},
@@ -41,6 +46,19 @@ func TestUnpack(t *testing.T) {
 			input:    "",
 			expected: "",
 		},
+		{
+			input:    "d\n5abc",
+			expected: "d\n\n\n\n\nabc",
+		},
+		{
+			input:    "dab0c",
+			expected: "dac",
+		},
+		{
+			input:    "dab0cvv0o",
+			expected: "dacvo",
+		},
+
 	} {
 		result, err := Unpack(tst.input)
 		require.Equal(t, tst.err, err)
@@ -49,7 +67,7 @@ func TestUnpack(t *testing.T) {
 }
 
 func TestUnpackWithEscape(t *testing.T) {
-	t.Skip() // Remove if task with asterisk completed
+	//t.Skip() // Remove if task with asterisk completed
 
 	for _, tst := range [...]test{
 		{
@@ -67,6 +85,25 @@ func TestUnpackWithEscape(t *testing.T) {
 		{
 			input:    `qwe\\\3`,
 			expected: `qwe\3`,
+		},
+		{
+			input:    `qw\\\ne`,
+			expected: "",
+			err:      ErrInvalidString,
+		},
+		{
+			input:    `qw\\\\\e`,
+			expected: "",
+			err:      ErrInvalidString,
+		},
+		{
+			input:    `qw\\\\e`,
+			expected: `qw\\e`,
+		},
+		{
+			input:    `qw\\\\\`,
+			expected: "",
+			err:      ErrInvalidString,
 		},
 	} {
 		result, err := Unpack(tst.input)
