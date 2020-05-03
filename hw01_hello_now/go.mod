@@ -7,4 +7,5 @@ require (
 	github.com/beevik/ntp v0.2.0
 	github.com/stretchr/testify v1.4.0 // indirect
 	golang.org/x/tools v0.0.0-20200308013534-11ec41452d41 // indirect
+	golang.org/x/net v0.0.0-20200202094626-16171245cfb2 // indirect
 )
