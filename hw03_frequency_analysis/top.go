@@ -53,7 +53,7 @@ func Top10(input string) []string {
 
 	res := make([]string, resultLength)
 
-	for i, _ := range res {
+	for i := range res {
 		res[i] = dictionarySlice[i].Key
 	}
 
