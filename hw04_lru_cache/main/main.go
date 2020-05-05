@@ -6,8 +6,10 @@ import (
 	lru "github.com/Stigie/otus_home_tasks/hw04_lru_cache"
 )
 
+var CapacityCache = 3
+
 func main() {
-	cache := lru.NewCache(3)
+	cache := lru.NewCache(CapacityCache)
 	ok := cache.Set("qwe", 1)
 	fmt.Println(ok)
 	ok = cache.Set("qwe1", 4)
