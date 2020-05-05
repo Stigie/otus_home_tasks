@@ -12,7 +12,7 @@ type List interface {
 }
 
 type listItem struct {
-	mux sync.Mutex
+	mux   sync.Mutex
 	Value interface{} // значение
 	Next  *listItem   // следующий элемент
 	Prev  *listItem   // предыдущий элемент

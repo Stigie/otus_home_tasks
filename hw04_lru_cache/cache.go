@@ -77,7 +77,7 @@ type cacheItem struct {
 	Key
 	Value     interface{}
 	QueueLink *listItem
-	mux sync.Mutex
+	mux       sync.Mutex
 }
 
 func NewCache(capacity int) Cache {
