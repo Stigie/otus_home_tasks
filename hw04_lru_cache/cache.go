@@ -16,14 +16,13 @@ type lruCache struct {
 	Capacity int
 	Queue    List
 	Items    sync.Map
-	mux sync.Mutex
 }
 
 func (lC *lruCache) CleanCacheIfFull() {
-	lC.mux.Lock()
-	defer lC.mux.Unlock()
 	if lC.Capacity == lC.Queue.Len() {
 		lastElem := lC.Queue.Back()
+		lastElem.mux.Lock()
+		defer lastElem.mux.Unlock()
 		lC.Items.Delete(lastElem.Value.(*cacheItem).Key)
 		lC.Queue.Remove(lastElem)
 	}
@@ -33,6 +32,8 @@ func (lC *lruCache) Set(key Key, value interface{}) bool {
 	storeValue, ok := lC.Items.Load(key)
 	if ok {
 		itemQuery := storeValue.(*cacheItem)
+		itemQuery.mux.Lock()
+		defer itemQuery.mux.Unlock()
 		itemQuery.Value = value
 		itemQuery.QueueLink.Value = itemQuery
 		lC.Queue.MoveToFront(itemQuery.QueueLink)
@@ -59,6 +60,8 @@ func (lC *lruCache) Get(key Key) (interface{}, bool) {
 	storeValue, ok := lC.Items.Load(key)
 	if ok {
 		itemQuery := storeValue.(*cacheItem)
+		itemQuery.mux.Lock()
+		defer itemQuery.mux.Unlock()
 		itemQuery.QueueLink.Value = itemQuery
 		lC.Queue.MoveToFront(itemQuery.QueueLink)
 		return storeValue.(*cacheItem).Value, ok
@@ -74,6 +77,7 @@ type cacheItem struct {
 	Key
 	Value     interface{}
 	QueueLink *listItem
+	mux sync.Mutex
 }
 
 func NewCache(capacity int) Cache {
