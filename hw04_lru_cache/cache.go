@@ -16,9 +16,12 @@ type lruCache struct {
 	Capacity int
 	Queue    List
 	Items    sync.Map
+	mux sync.Mutex
 }
 
 func (lC *lruCache) CleanCacheIfFull() {
+	lC.mux.Lock()
+	defer lC.mux.Unlock()
 	if lC.Capacity == lC.Queue.Len() {
 		lastElem := lC.Queue.Back()
 		lC.Items.Delete(lastElem.Value.(*cacheItem).Key)
