@@ -49,13 +49,79 @@ func TestCache(t *testing.T) {
 		require.Nil(t, val)
 	})
 
+	t.Run("Clear cache", func(t *testing.T) {
+		cache := NewCache(5)
+		ok := cache.Set("qwe", 1)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe1", 4)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe2", 3)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe3", 4)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe", 799)
+		require.Equal(t, true, ok)
+
+		cache.Clear()
+
+		_, ok = cache.Get("qwe")
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe", 1)
+		require.Equal(t, false, ok)
+		_, ok = cache.Get("qwe")
+		require.Equal(t, true, ok)
+	})
+
 	t.Run("purge logic", func(t *testing.T) {
-		// Write me
+		cache := NewCache(3)
+		ok := cache.Set("qwe", 1)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe1", 4)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe2", 3)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe3", 3)
+		require.Equal(t, false, ok)
+
+		_, ok = cache.Get("qwe")
+		require.Equal(t, false, ok)
+
+		cache.Clear()
+
+		ok = cache.Set("qwe", 1)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe1", 4)
+		require.Equal(t, false, ok)
+		cache.Get("qwe")
+		ok = cache.Set("qwe2", 3)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe3", 3)
+		require.Equal(t, false, ok)
+
+		_, ok = cache.Get("qwe1")
+		require.Equal(t, false, ok)
+
+		cache.Clear()
+
+		ok = cache.Set("qwe", 1)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe1", 4)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe", 999)
+		require.Equal(t, true, ok)
+		ok = cache.Set("qwe2", 3)
+		require.Equal(t, false, ok)
+		ok = cache.Set("qwe3", 3)
+		require.Equal(t, false, ok)
+
+		_, ok = cache.Get("qwe1")
+		require.Equal(t, false, ok)
+
 	})
 }
 
 func TestCacheMultithreading(t *testing.T) {
-	t.Skip() // Remove if task with asterisk completed
+	// t.Skip() // Remove if task with asterisk completed
 
 	c := NewCache(10)
 	wg := &sync.WaitGroup{}
@@ -63,15 +129,15 @@ func TestCacheMultithreading(t *testing.T) {
 
 	go func() {
 		defer wg.Done()
-		for i := 0; i < 1_000_000; i++ {
+		for i := 0; i < 1_000; i++ {
 			c.Set(Key(strconv.Itoa(i)), i)
 		}
 	}()
 
 	go func() {
 		defer wg.Done()
-		for i := 0; i < 1_000_000; i++ {
-			c.Get(Key(strconv.Itoa(rand.Intn(1_000_000))))
+		for i := 0; i < 1_000; i++ {
+			c.Get(Key(strconv.Itoa(rand.Intn(1_000))))
 		}
 	}()
 
