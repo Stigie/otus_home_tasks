@@ -7,6 +7,7 @@ import (
 )
 
 var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
+var DeltaForWaitGroup = 1
 
 type Task func() error
 
@@ -18,7 +19,7 @@ func Run(tasks []Task, N int, M int) error { //nolint:gocritic
 	var errorCounter int32
 
 	for i := 0; i < N; i++ {
-		wg.Add(1) //nolint:gomnd
+		wg.Add(DeltaForWaitGroup)
 		go func(taskChan <-chan Task, wg *sync.WaitGroup) {
 			defer wg.Done()
 			for task := range taskChan {
