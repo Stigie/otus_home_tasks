@@ -2,6 +2,7 @@ package hw06_pipeline_execution //nolint:golint,stylecheck
 
 import (
 	"strconv"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -14,12 +15,14 @@ const (
 )
 
 func TestPipeline(t *testing.T) {
+	var  counter int32 = 4
 	// Stage generator
-	g := func(name string, f func(v I) I) Stage {
+	g := func(name string, f func(v I) I, counter *int32) Stage {
 		return func(in In) Out {
 			out := make(Bi)
 			go func() {
 				defer close(out)
+				defer atomic.AddInt32(counter, -1)
 				for v := range in {
 					time.Sleep(sleepPerStage)
 					out <- f(v)
@@ -29,12 +32,32 @@ func TestPipeline(t *testing.T) {
 		}
 	}
 
+
+
 	stages := []Stage{
-		g("Dummy", func(v I) I { return v }),
-		g("Multiplier (* 2)", func(v I) I { return v.(int) * 2 }),
-		g("Adder (+ 100)", func(v I) I { return v.(int) + 100 }),
-		g("Stringifier", func(v I) I { return strconv.Itoa(v.(int)) }),
+		g("Dummy", func(v I) I { return v }, &counter),
+		g("Multiplier (* 2)", func(v I) I { return v.(int) * 2 }, &counter),
+		g("Adder (+ 100)", func(v I) I { return v.(int) + 100 }, &counter),
+		g("Stringifier", func(v I) I { return strconv.Itoa(v.(int)) }, &counter),
 	}
+
+	t.Run("test all tasks finished", func(t *testing.T) {
+		in := make(Bi)
+		data := []int{1, 2, 3, 4, 5}
+
+		go func() {
+			for _, v := range data {
+				in <- v
+			}
+			close(in)
+		}()
+
+		for _ = range ExecutePipeline(in, nil, stages...) {
+
+		}
+		require.Equal(t, counter,  int32(0))
+	})
+
 
 	t.Run("simple case", func(t *testing.T) {
 		in := make(Bi)
