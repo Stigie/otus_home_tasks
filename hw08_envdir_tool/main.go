@@ -11,6 +11,6 @@ func main() {
 		fmt.Println("err: ", err)
 		os.Exit(1)
 	}
-	fmt.Println(os.Args)
+
 	os.Exit(RunCmd(os.Args[2:], envMap))
 }
