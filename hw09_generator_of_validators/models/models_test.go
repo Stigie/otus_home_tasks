@@ -60,8 +60,22 @@ func TestUserValidation(t *testing.T) {
 	})
 
 	t.Run("phones slice", func(t *testing.T) {
-		// Write me :)
-		t.Fail()
+		u := goodUser
+
+		u.Phones = []string{"18143212432", "00000000000", "33333333333"}
+		errs, err := u.Validate()
+		require.Nil(t, err)
+		require.Len(t, errs, 0)
+
+		u.Phones = []string{"18143212432", "0000000000", "33333333333"}
+		errs, err = u.Validate()
+		require.Nil(t, err)
+		require.Equal(t, ErrLen, errs[0].Err, "Length less then requared")
+		u.Phones = []string{"18143212432", "00000000000", "333333333333"}
+		errs, err = u.Validate()
+		require.Nil(t, err)
+		require.Equal(t, ErrLen, errs[0].Err, "Length bigger then requared")
+
 	})
 
 	t.Run("many errors", func(t *testing.T) {
@@ -127,6 +141,47 @@ func TestResponseValidation(t *testing.T) {
 		require.Nil(t, err)
 		requireOneFieldErr(t, errs, "Code")
 	})
+}
+
+func TestNastedStruct(t *testing.T) {
+	goodStruct := App1{
+		Version: struct {
+			Build int `validate:"min:18|max:50"`
+		}{
+			34,
+		},
+		Vqweqe: struct {
+			Build []int `validate:"min:18|max:50"`
+		}{
+			[]int{19, 20, 33},
+		},
+		Vqweqe1: App{
+			Version: "22222",
+		},
+	}
+
+	errs, err := goodStruct.Validate()
+	require.Nil(t, err)
+	require.Len(t, errs, 0)
+
+	badStruct := App1{
+		Version: struct {
+			Build int `validate:"min:18|max:50"`
+		}{
+			90,
+		},
+		Vqweqe: struct {
+			Build []int `validate:"min:18|max:50"`
+		}{
+			[]int{77, 20, 33},
+		},
+		Vqweqe1: App{
+			Version: "2222",
+		},
+	}
+	errs, err = badStruct.Validate()
+	require.Nil(t, err)
+	require.Len(t, errs, 3)
 }
 
 func requireValidation(t *testing.T, v interface{}, msgAndArgs ...interface{}) {

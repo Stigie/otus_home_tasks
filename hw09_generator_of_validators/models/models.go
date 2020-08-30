@@ -17,6 +17,19 @@ type (
 	App struct {
 		Version string `validate:"len:5"`
 	}
+	App1 struct {
+		Version struct {
+			Build int `validate:"min:18|max:50"`
+		}
+		Vqweqe struct {
+			Build []int `validate:"min:18|max:50"`
+		}
+		Vqweqe1 App
+	}
+	App2 struct {
+		App1
+		Build int `validate:"min:18|max:50"`
+	}
 )
 
 type Token struct {
@@ -29,3 +42,5 @@ type Response struct {
 	Code int    `validate:"in:200,404,500"`
 	Body string `json:"omitempty"`
 }
+
+//go:generate go-validate ./models.go
