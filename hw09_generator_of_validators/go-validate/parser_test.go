@@ -9,7 +9,7 @@ import (
 
 func TestCodeParsing(t *testing.T) {
 	t.Run("should parse package name correctly", func(t *testing.T) {
-		input, _ := parser.ParseFile(token.NewFileSet(), "./testData/models.go", nil, parser.AllErrors)
+		input, _ := parser.ParseFile(token.NewFileSet(), "./testdata/models.go", nil, parser.AllErrors)
 		data, err := parseAstFile(input)
 
 		userData := []NastedStruct{
@@ -147,7 +147,7 @@ func TestCodeParsing(t *testing.T) {
 		}
 
 		templateData := TemplateData{
-			Package:       "package testData",
+			Package:       "package testdata",
 			NastedStructs: expectedData,
 		}
 

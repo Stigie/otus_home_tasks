@@ -7,9 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
-	"regexp"
 )
 
 type ValidationError struct {

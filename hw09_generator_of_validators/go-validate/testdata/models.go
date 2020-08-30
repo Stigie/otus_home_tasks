@@ -1,4 +1,4 @@
-package testData
+package testdata
 
 type UserRole string
 
