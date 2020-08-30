@@ -31,8 +31,7 @@ var validateRegexp = regexp.MustCompile(`validate:"(.*)?"`)
 func parseStruct(strct *ast.StructType, nastedStruct []NastedStruct, fieldName []string) (result []NastedStruct) {
 	fset := token.NewFileSet()
 	for _, field := range strct.Fields.List {
-		nestedStruct, isStructField := field.Type.(*ast.StructType)
-		if isStructField {
+		if nestedStruct, isStructField := field.Type.(*ast.StructType); isStructField {
 			nastedStruct = append(nastedStruct, NastedStruct{
 				Parent:   fieldName,
 				Name:     field.Names[0].Name,
@@ -78,6 +77,7 @@ func parseStruct(strct *ast.StructType, nastedStruct []NastedStruct, fieldName [
 			})
 		}
 	}
+
 	return nastedStruct
 }
 
@@ -155,5 +155,6 @@ func writeToTemplate(file *ast.File) (*bytes.Buffer, error) {
 	if err := tmpl.Execute(&buf, data); err != nil {
 		return nil, err
 	}
+
 	return &buf, nil
 }
