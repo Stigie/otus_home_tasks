@@ -61,5 +61,17 @@ func TestTelnetClient(t *testing.T) {
 		}()
 
 		wg.Wait()
+
+	})
+	t.Run("test not available host", func(t *testing.T) {
+		in := &bytes.Buffer{}
+		out := &bytes.Buffer{}
+
+		timeout, err := time.ParseDuration("10s")
+		require.NoError(t, err)
+
+		client := NewTelnetClient("127.0.0.1:4242", timeout, ioutil.NopCloser(in), out)
+		err = client.Connect()
+		require.Error(t, err)
 	})
 }
