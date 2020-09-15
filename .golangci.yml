@@ -5,13 +5,13 @@ linters:
   disable-all: false
   enable-all: true
   disable:
-   # - goerr113
+    - goerr113
     - gochecknoglobals
     - gochecknoinits
     - godox
-   # - gofumpt
+    - gofumpt
     - gomnd
     - lll
     - nakedret
-   # - nlreturn
+    - nlreturn
     - wsl

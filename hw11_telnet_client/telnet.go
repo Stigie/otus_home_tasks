@@ -29,8 +29,8 @@ type Client struct {
 	out     io.Writer
 }
 
-var connectionRefuseErr = errors.New("...Connection refused")
-var connectionCloseByPeerErr = errors.New("...Connection closed by peer")
+var errConnectionRefuse = errors.New("...Connection refused")
+var errConnectionCloseByPeer = errors.New("...Connection closed by peer")
 
 func (tc *Client) Connect() error {
 	conn, err := net.DialTimeout("tcp", tc.address, tc.timeout)
@@ -53,7 +53,7 @@ func (tc *Client) Close() error {
 	}
 	err := tc.conn.Close()
 	if err != nil {
-		return connectionRefuseErr
+		return errConnectionRefuse
 	}
 
 	return nil
@@ -62,7 +62,7 @@ func (tc *Client) Close() error {
 func (tc *Client) Send() error {
 	_, err := bufio.NewWriter(tc.conn).ReadFrom(tc.in)
 	if err == io.EOF {
-		return connectionCloseByPeerErr
+		return errConnectionCloseByPeer
 	}
 
 	return err
@@ -111,6 +111,7 @@ func (tc *Client) Start() error {
 				if err != nil {
 					cancel()
 					errChan <- err
+
 					return
 				}
 			}
