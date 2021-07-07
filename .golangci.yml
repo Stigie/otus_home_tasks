@@ -5,7 +5,6 @@ linters:
   disable-all: false
   enable-all: true
   disable:
-    - goerr113
     - gochecknoglobals
     - gochecknoinits
     - godox
