@@ -1,13 +1,10 @@
-package hw03_frequency_analysis //nolint:golint
+package main
 
 import (
-	"testing"
+	"fmt"
 
-	"github.com/stretchr/testify/require"
+	fa "github.com/Stigie/otus_home_tasks/hw03_frequency_analysis"
 )
-
-// Change to true if needed
-var taskWithAsteriskIsCompleted = true
 
 var text = `Как видите, он  спускается  по  лестнице  вслед  за  своим
 	другом   Кристофером   Робином,   головой   вниз,  пересчитывая
@@ -43,40 +40,7 @@ var text = `Как видите, он  спускается  по  лестни�
 	посидеть у огня и послушать какую-нибудь интересную сказку.
 		В этот вечер...`
 
-var englishText = "cat and dog, one dog,two cats and one man"
-var dashText = "- - - -- -- --- -- -- - - "
-var dashWordText = "какой-то очень какойто какойто какой то очень очень-очень очень-очень"
-var footWords = "нога 'нога' нога! Нога нога "
-
-func TestTop10(t *testing.T) {
-	t.Run("no words in empty string", func(t *testing.T) {
-		require.Len(t, Top10(""), 0)
-	})
-
-	t.Run("positive test", func(t *testing.T) {
-		if taskWithAsteriskIsCompleted {
-			expected := []string{"он", "а", "и", "что", "ты", "не", "если", "то", "его", "кристофер", "робин", "в"}
-			require.Subset(t, expected, Top10(text))
-		} else {
-			expected := []string{"он", "и", "а", "что", "ты", "не", "если", "-", "то", "Кристофер"}
-			require.ElementsMatch(t, expected, Top10(text))
-		}
-	})
-
-	t.Run("english words test", func(t *testing.T) {
-		expected := []string{"cat", "and", "dog", "one", "two", "cats", "man"}
-		assert.Subset(t, expected, Top10(englishText))
-	})
-	t.Run("dash test", func(t *testing.T) {
-		assert.Len(t, Top10(dashText), 0)
-	})
-	t.Run("dash word test", func(t *testing.T) {
-		expected := []string{"какой-то",  "очень", "очень-очень", "какойто", "какой", "то"}
-		assert.Subset(t, expected, Top10(dashWordText))
-	})
-	t.Run("punctuation mark and capital letter test", func(t *testing.T) {
-		expected := []string{"нога"}
-		assert.Subset(t, expected, Top10(footWords))
-		assert.Len(t, Top10(footWords), 1)
-	})
+func main() {
+	a := fa.Top10(text)
+	fmt.Println(a, len(a))
 }
