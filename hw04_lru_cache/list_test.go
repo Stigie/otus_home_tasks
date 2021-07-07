@@ -1,6 +1,7 @@
 package hw04_lru_cache //nolint:golint,stylecheck
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -13,6 +14,43 @@ func TestList(t *testing.T) {
 		require.Equal(t, 0, l.Len())
 		require.Nil(t, l.Front())
 		require.Nil(t, l.Back())
+	})
+
+	t.Run("remove first or last item", func(t *testing.T) {
+		l := NewList()
+		l.PushFront(10)
+		l.PushFront(20)
+		l.PushFront(30)
+		l.Remove(l.Front())
+		elems := make([]int, 0, l.Len())
+		for i := l.Front(); i != nil; i = i.Prev {
+			elems = append(elems, i.Value.(int))
+		}
+		require.Equal(t, []int{20, 10}, elems)
+		l.Remove(l.Back())
+		elems = make([]int, 0, l.Len())
+		for i := l.Front(); i != nil; i = i.Prev {
+			elems = append(elems, i.Value.(int))
+		}
+		require.Equal(t, []int{20}, elems)
+	})
+
+	t.Run("test on loop", func(t *testing.T) {
+		l := NewList()
+		l.PushFront(10)
+		l.PushFront(20)
+		l.PushFront(30)
+		require.Equal(t, l.Len(), 3)
+
+		l.MoveToFront(l.Back())
+		j := 0
+		for i := l.Back(); i != nil; i = i.Next {
+			if j > l.Len() {
+				require.Error(t, errors.New("Detected loop"))
+			}
+			j++
+		}
+
 	})
 
 	t.Run("complex", func(t *testing.T) {
